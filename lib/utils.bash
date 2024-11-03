@@ -5,7 +5,6 @@ set -euo pipefail
 # TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for umbra.
 GH_REPO="https://github.com/pmqueiroz/umbra"
 TOOL_NAME="umbra"
-TOOL_TEST="umbra --version"
 
 curl_opts=(-fsSL)
 
@@ -69,7 +68,9 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		test -x "$install_path/$TOOL_TEST" || fail "Expected $install_path/$TOOL_NAME to be executable."
+		find "$install_path" | sed -e 's/[^-][^\/]*\//|   /g' -e 's/|\([^ ]\)/|-- \1/'
+
+		test -x "$install_path/$TOOL_NAME" || fail "Expected $install_path/$TOOL_NAME to be executable."
 
 		echo "$TOOL_NAME $version installation was successful!"
 	) || (
