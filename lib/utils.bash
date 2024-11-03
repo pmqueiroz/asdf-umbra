@@ -27,20 +27,33 @@ list_all_versions() {
 	list_github_tags
 }
 
+download() {
+	local url="$1"
+	local filename="$2"
+
+	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+}
+
 download_release() {
 	local version="$1"
 	local platform="$2"
 	local arch="$3"
 	local filename="$4"
-	local url_suffix="$5"
 
-	url="$GH_REPO/releases/download/${version}/umbra-${version}-${platform}-${arch}.tar.gz${url_suffix}"
+	url="$GH_REPO/releases/download/${version}/umbra-${version}-${platform}-${arch}.tar.gz"
 
-	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+	download "$url" "$filename"
 }
 
 download_sha() {
-	download_release "$@" .sha256
+	local version="$1"
+	local platform="$2"
+	local arch="$3"
+	local filename="$4"
+
+	url="$GH_REPO/releases/download/${version}/umbra-${version}-${platform}-${arch}.tar.gz.sha256"
+
+	download "$url" "$filename"
 }
 
 install_version() {
