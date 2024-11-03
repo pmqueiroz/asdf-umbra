@@ -32,7 +32,7 @@ download_release() {
 	local platform="$2"
 	local arch="$3"
 	local filename="$4"
-	local url_suffix="$4"
+	local url_suffix="$5"
 
 	url="$GH_REPO/releases/download/${version}/umbra-${version}-${platform}-${arch}.tar.gz${url_suffix}"
 
