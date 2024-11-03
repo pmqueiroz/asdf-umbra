@@ -40,7 +40,7 @@ download_release() {
 }
 
 download_sha() {
-	download_release $@ .sha256
+	download_release "$@" .sha256
 }
 
 install_version() {
@@ -56,25 +56,23 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		test -x "$install_path/$TOOL_TEST" || fail "Expected $install_path/$tool_cmd to be executable."
+		test -x "$install_path/$TOOL_TEST" || fail "Expected $install_path/$TOOL_NAME to be executable."
 
 		echo "$TOOL_NAME $version installation was successful!"
 	) || (
 		rm -rf "$install_path"
-		fail "An error occurred while installing $TOOL_NAME $version."
+		fail "An error occurred while installing $TOOL_NAME $TOOL_NAME."
 	)
 }
 
 
 get_platform() {
-  local silent=${1:-}
   local platform=""
 
   platform="$(uname | tr '[:upper:]' '[:lower:]')"
 
   case "$platform" in
     linux | darwin)
-      [ -z "$silent" ] && msg "Platform '${platform}' supported!"
       ;;
     *)
       fail "Platform '${platform}' not supported!"
@@ -86,7 +84,8 @@ get_platform() {
 
 get_arch() {
   local arch=""
-  local arch_check=$(uname -m)
+  local arch_check
+	arch_check=$(uname -m)
   case "${arch_check}" in
     x86_64 | amd64) arch="amd64" ;;
     aarch64 | arm64) arch="arm64" ;;
