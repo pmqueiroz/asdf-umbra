@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eu
+[ "${BASH_VERSINFO[0]}" -ge 3 ] && set -o pipefail
 
 current_script_path=${BASH_SOURCE[0]}
 plugin_dir=$(dirname "$(dirname "$current_script_path")")
@@ -8,16 +9,35 @@ plugin_dir=$(dirname "$(dirname "$current_script_path")")
 # shellcheck source=./lib/utils.bash
 source "${plugin_dir}/lib/utils.bash"
 
-mkdir -p "$ASDF_DOWNLOAD_PATH"
+download_umbra() {
+  local version=$1
+  local download_path=$2
+  local platform=""
+  local arch=""
 
-# TODO: Adapt this to proper extension and adapt extracting strategy.
-release_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
+  platform=$(get_platform)
+  arch=$(get_arch)
+  download_file="$ASDF_DOWNLOAD_PATH/$TOOL_NAME-$ASDF_INSTALL_VERSION.tar.gz"
+  download_file_sha="${download_file}.sha256"
 
-# Download tar.gz file to the download directory
-download_release "$ASDF_INSTALL_VERSION" "$release_file"
+  download_release $version $platform $arch $download_file
 
-#  Extract contents of tar.gz file into the download directory
-tar -xzf "$release_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 || fail "Could not extract $release_file"
+  if [ "unset" = "${ASDF_GOLANG_SKIP_CHECKSUM:-unset}" ]; then
+    download_sha $version $platform $arch $download_file_sha
 
-# Remove the tar.gz file since we don't need to keep it
-rm "$release_file"
+    echo 'verifying checksum'
+    if ! check_shasum "${download_file}" "${download_file_sha}"; then
+      fail "Authenticity of package can not be assured. Exiting."
+    else
+      msg "checksum verified"
+    fi
+  else
+    err "checksum skipped"
+  fi
+
+  tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 || fail "Could not extract $download_file"
+
+  rm "$download_file"
+}
+
+download_umbra "$ASDF_INSTALL_VERSION" "$ASDF_DOWNLOAD_PATH"

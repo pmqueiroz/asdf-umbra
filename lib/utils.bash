@@ -7,14 +7,8 @@ GH_REPO="https://github.com/pmqueiroz/umbra"
 TOOL_NAME="umbra"
 TOOL_TEST="umbra --version"
 
-fail() {
-	echo -e "asdf-$TOOL_NAME: $*"
-	exit 1
-}
-
 curl_opts=(-fsSL)
 
-# NOTE: You might want to remove this if umbra is not hosted on GitHub releases.
 if [ -n "${GITHUB_API_TOKEN:-}" ]; then
 	curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_API_TOKEN")
 fi
@@ -26,26 +20,27 @@ sort_versions() {
 
 list_github_tags() {
 	git ls-remote --tags --refs "$GH_REPO" |
-		grep -o 'refs/tags/.*' | cut -d/ -f3- |
-		sed 's/^v//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+		grep -o 'refs/tags/.*' | cut -d/ -f3-
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if umbra has other means of determining installable versions.
 	list_github_tags
 }
 
 download_release() {
-	local version filename url
-	version="$1"
-	filename="$2"
+	local version="$1"
+	local platform="$2"
+	local arch="$3"
+	local filename="$4"
+	local url_suffix="$4"
 
-	# TODO: Adapt the release URL convention for umbra
-	url="$GH_REPO/archive/v${version}.tar.gz"
+	url="$GH_REPO/releases/download/${version}/umbra-${version}-${platform}-${arch}.tar.gz${url_suffix}"
 
-	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
+}
+
+download_sha() {
+	download_release $@ .sha256
 }
 
 install_version() {
@@ -61,14 +56,57 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		# TODO: Assert umbra executable exists.
-		local tool_cmd
-		tool_cmd="$(echo "$TOOL_TEST" | cut -d' ' -f1)"
-		test -x "$install_path/$tool_cmd" || fail "Expected $install_path/$tool_cmd to be executable."
+		test -x "$install_path/$TOOL_TEST" || fail "Expected $install_path/$tool_cmd to be executable."
 
 		echo "$TOOL_NAME $version installation was successful!"
 	) || (
 		rm -rf "$install_path"
 		fail "An error occurred while installing $TOOL_NAME $version."
 	)
+}
+
+
+get_platform() {
+  local silent=${1:-}
+  local platform=""
+
+  platform="$(uname | tr '[:upper:]' '[:lower:]')"
+
+  case "$platform" in
+    linux | darwin)
+      [ -z "$silent" ] && msg "Platform '${platform}' supported!"
+      ;;
+    *)
+      fail "Platform '${platform}' not supported!"
+      ;;
+  esac
+
+  printf "%s" "$platform"
+}
+
+get_arch() {
+  local arch=""
+  local arch_check=$(uname -m)
+  case "${arch_check}" in
+    x86_64 | amd64) arch="amd64" ;;
+    aarch64 | arm64) arch="arm64" ;;
+    *)
+      fail "Arch '${arch_check}' not supported!"
+      ;;
+  esac
+
+  printf "%s" "$arch"
+}
+
+msg() {
+  echo -e "\033[32m$1\033[39m" >&2
+}
+
+err() {
+  echo -e "\033[31m$1\033[39m" >&2
+}
+
+fail() {
+	echo -e "asdf-$TOOL_NAME: $*"
+	exit 1
 }
