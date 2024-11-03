@@ -68,8 +68,6 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		find "$install_path" | sed -e 's/[^-][^\/]*\//|   /g' -e 's/|\([^ ]\)/|-- \1/'
-
 		test -x "$install_path/$TOOL_NAME" || fail "Expected $install_path/$TOOL_NAME to be executable."
 
 		echo "$TOOL_NAME $version installation was successful!"
