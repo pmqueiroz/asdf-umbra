@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
 if [ "${ASDF_INSTALL_VERSION}" != 'system' ]; then
-  if [[ "unset" == "${UMBRA_PATH:-unset}" ]]; then
-    export UMBRA_PATH=$ASDF_INSTALL_PATH/
-  fi
+  export UMBRA_PATH=$ASDF_INSTALL_PATH/
 fi
