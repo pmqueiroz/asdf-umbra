@@ -53,8 +53,8 @@ download_umbra() {
     err "checksum skipped"
   fi
 
-  tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 bin/* || fail "Could not extract $download_file bin files"
-  tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH" lib/* || fail "Could not extract $download_file lib files"
+  tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH" --strip-components=1 --wildcards "bin/*" || fail "Could not extract $download_file bin files"
+  tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH" --wildcards "lib/*" || fail "Could not extract $download_file lib files"
 
   rm "$download_file"
 }
