@@ -70,7 +70,7 @@ install_version() {
 
 		test -x "$install_path/$TOOL_NAME" || fail "Expected $install_path/$TOOL_NAME to be executable."
 
-		echo "$TOOL_NAME $version installation was successful!"
+		msg "$TOOL_NAME $version installation was successful!"
 	) || (
 		rm -rf "$install_path"
 		fail "An error occurred while installing $TOOL_NAME $TOOL_NAME."
