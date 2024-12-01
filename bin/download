@@ -53,6 +53,7 @@ download_umbra() {
     err "checksum skipped"
   fi
 
+  mkdir -p "$ASDF_DOWNLOAD_PATH/tmp"
   tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH/tmp" || fail "Could not extract $download_file bin files"
   mv "$ASDF_DOWNLOAD_PATH/tmp/bin/"* "$ASDF_DOWNLOAD_PATH"
   mv "$ASDF_DOWNLOAD_PATH/tmp/lib" "$ASDF_DOWNLOAD_PATH"
