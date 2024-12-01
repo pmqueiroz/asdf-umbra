@@ -43,7 +43,7 @@ download_umbra() {
   if [ "unset" = "${ASDF_GOLANG_SKIP_CHECKSUM:-unset}" ]; then
     download_sha "$version" "$platform" "$arch" "$download_file_sha"
 
-    echo 'verifying checksum'
+    msg 'verifying checksum'
     if ! check_shasum "${download_file}" "${download_file_sha}"; then
       fail "Authenticity of package can not be assured. Exiting."
     else
