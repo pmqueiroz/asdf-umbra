@@ -55,7 +55,6 @@ download_umbra() {
 
   mkdir -p "$ASDF_DOWNLOAD_PATH/tmp"
   tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH/" || fail "Could not extract $download_file bin files"
-  ls -la "$ASDF_DOWNLOAD_PATH/"
 
   rm "$download_file"
 }
