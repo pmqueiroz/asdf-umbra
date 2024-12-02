@@ -53,9 +53,9 @@ download_umbra() {
     err "checksum skipped"
   fi
 
-  mkdir -p "$ASDF_DOWNLOAD_PATH/tmp"
   tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH/" || fail "Could not extract $download_file bin files"
-
+  mkdir -p "$ASDF_INSTALL_PATH/bin"
+  cp "$ASDF_DOWNLOAD_PATH"/umbra "$ASDF_INSTALL_PATH"/bin/umbra
   rm "$download_file"
 }
 
