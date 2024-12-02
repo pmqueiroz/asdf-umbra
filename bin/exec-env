@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 if [ "${ASDF_INSTALL_VERSION}" != 'system' ]; then
-  export UMBRA_PATH=$ASDF_INSTALL_PATH/bin
+  export UMBRA_PATH=$ASDF_INSTALL_PATH
 fi

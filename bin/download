@@ -54,7 +54,7 @@ download_umbra() {
   fi
 
   tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH/" || fail "Could not extract $download_file bin files"
-  rm "$download_file"
+  rm "$download_file" "$download_file_sha"
 }
 
 download_umbra "$ASDF_INSTALL_VERSION"
