@@ -68,6 +68,8 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
+		tree "$install_path"
+
 		test -x "$install_path/$TOOL_NAME" || fail "Expected $install_path/$TOOL_NAME to be executable."
 
 		msg "$TOOL_NAME $version installation was successful!"
