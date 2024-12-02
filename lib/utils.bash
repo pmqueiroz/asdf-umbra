@@ -59,6 +59,7 @@ install_version() {
 	local install_type="$1"
 	local version="$2"
 	local install_path="${3%/bin}"
+	local executable_path="$install_path/bin/$TOOL_NAME"
 
 	if [ "$install_type" != "version" ]; then
 		fail "asdf-$TOOL_NAME supports release installs only"
@@ -68,7 +69,7 @@ install_version() {
 		mkdir -p "$install_path"
 		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
 
-		test -x "$install_path/$TOOL_NAME" || fail "Expected $install_path/$TOOL_NAME to be executable."
+		test -x "$executable_path" || fail "Expected $executable_path to be executable."
 
 		msg "$TOOL_NAME $version installation was successful!"
 	) || (
