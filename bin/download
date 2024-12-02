@@ -54,9 +54,6 @@ download_umbra() {
   fi
 
   tar -xzf "$download_file" -C "$ASDF_DOWNLOAD_PATH/" || fail "Could not extract $download_file bin files"
-  mkdir -p "$ASDF_INSTALL_PATH/bin"
-  find "$ASDF_DOWNLOAD_PATH" -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g' | awk '{print "    " $0}'
-  cp "$ASDF_DOWNLOAD_PATH"/umbra "$ASDF_INSTALL_PATH"/bin/umbra
   rm "$download_file"
 }
 
