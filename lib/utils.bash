@@ -26,6 +26,15 @@ list_all_versions() {
 	list_github_tags
 }
 
+define_version() {
+	local version="$1"
+	if [[ "$version" == 1.14.* || "$version" > 1.14.0 ]]; then
+		version="v$version"
+	fi
+
+	echo "$version"
+}
+
 download() {
 	local url="$1"
 	local filename="$2"
@@ -34,7 +43,8 @@ download() {
 }
 
 download_release() {
-	local version="$1"
+	local version
+	version=$(define_version "$1")
 	local platform="$2"
 	local arch="$3"
 	local filename="$4"
@@ -45,7 +55,8 @@ download_release() {
 }
 
 download_sha() {
-	local version="$1"
+	local version
+	version=$(define_version "$1")
 	local platform="$2"
 	local arch="$3"
 	local filename="$4"
